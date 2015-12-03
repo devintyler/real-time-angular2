@@ -43,18 +43,34 @@
 
 				<section>
 					<h1>Real Time Angular 2</h1>
-					<h3>Examples using Syncano</h3>
+
+					<aside class="notes">
+						Let me introduce myself, my name is Devin, I'm from the United States, and the only reason
+						why I'm here is because I love pierogies.
+
+						I want to talk about real time data sync with Angular 2 and build an example in ES5, but first
+						I want to quickly go over some differences between Angular 1.x and Angular 2
+					</aside>
 				</section>
 
 				<!-- ANGULAR 2 -->
 				<section>
-					<h2>Angular 2: Revamped and Improved</h2>
+					<h2><span style="color:red">Angular 2:</span> Revamped and Improved</h2>
 					<h4>Quick general overview of the changes</h4>
+
+					<aside class="notes">
+						If you have been keeping up with Angular 2, you know it's still in alpha stages,
+						and still very unstable. I decided to learn how to use it with ES5 as a bit of a challenge
+						to myself. There are very little resources available for ES5 versions of Angular 2<br><br>
+
+						The problem with this was that it was hard to figure out how to set up the class, and also
+						how to use the built-in directives.
+					</aside>
 				</section>
 
 				<section>
 					<section>
-						<h3>Components vs. Controllers/$scope</h3>
+						<h3>Components vs. Controllers/<code style="color:aqua">$scope</code></h3>
 					</section>
 					<section>
 						<h3>CONTROLLERS AND $SCOPE ARE <span style="color:red">GONE!</span></h3>
@@ -65,15 +81,15 @@
 						<ul>
 							<li>Angular 2 is following other frameworks (React, Polymer) with components</li>
 							<li>Components are directives with templates</li>
-							<li>Focus is on building component in your app javascript file</li>
+							<li>Focus is on building component in your app's single javascript file</li>
 						</ul>
 					</section>
 					<section>
 						<h3>Code difference:</h3>
 						<p>Angular 1.x</p>
-						<pre><code>ng-controller="myController"</code></pre>
+						<pre><code class="hljs">ng-controller="myController"</code></pre>
 						<p>Angular 2.0</p>
-						<pre><code><my-component></code></pre>
+						<pre><code class="hljs"><my-component></code></pre>
 					</section>
 				</section>
 
@@ -82,43 +98,120 @@
 						<h3>Dependency Injection</h3>
 					</section>
 					<section>
-						More Slides
+						<h3>Things to Fix From Angular 1.x DI</h3>
+						<ul>
+							<li>Allow for easier minification of DI</li>
+							<li>Create lifetime/scope control</li>
+							<li>Allow child injectors</li>
+						</ul>
 					</section>
 				</section>
 
 				<section>
 					<section>
-						<h3>TypeScript</h3>
+						<h3>TypeScript vs. Javascript</h3>
+
+						<aside class="notes">
+							I actually like TypeScript, it's not much different than JS
+						</aside>
 					</section>
 					<section>
-						More Slides
+						<h3>Typescript is basically Javascript with:</h3>
+						<ul>
+							<li>Classes</li>
+							<li>Static Types</li>
+							<li>Annotations</li>
+							<li>Decorations</li>
+							<li>ES6</li>
+						</ul>
 					</section>
 				</section>
 
 				<section>
 					<section>
 						<h3>Bootstrapping</h3>
-					</section>
-					<section>
-						More Slides
-					</section>
-				</section>
 
-				<section>
-					<section>
-						<h3>Zone.js</h3>
+						<aside class="notes">
+							Previously, bootstrapping was done through binding your app and controller to the template
+							or index page.
+						</aside>
 					</section>
 					<section>
-						More Slides
+						<h3>Example Bootstrap:</h3>
+						<pre><code class="hljs" data-trim>
+document.addEventListener('DOMContentLoaded', function() {
+	ng.bootstrap(Component);
+});
+						</code></pre>
+
+						<aside class="notes">
+							Now, since components are being used, the bootstrapping is called in your app file
+							with the components being used as the parameters.<br>
+							The important thing is that you don't bootstrap until after DOMContentLoaded.
+						</aside>
 					</section>
 				</section>
 
 				<section>
 					<section>
 						<h3>Other Changes</h3>
+						<ul>
+							<li>Event Emitters</li>
+							<li>Models - <code class="hljs">{{modelTest}} - [(ng-model)]="modelTest"</code></li>
+							<li>Form/validation</li>
+							<li>Remove 'ng-click' type events in place of (click)</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Zone.js</h2>
+
+						<aside class="notes">
+							- what is zone.js?<br>
+							- written by Brian Ford<br>
+							- inspired by Dart
+						</aside>
 					</section>
 					<section>
-						More Slides
+						<blockquote>
+							"In a nutshell, Zone provides what you might consider a 'thread execution' context for JavaScript."
+						</blockquote>
+						<p>- Jeremy Likness</p>
+
+						<aside class="notes">
+							- quote by Jeremy<br>
+							- basically, Zone.js allows you to run sync and async functions, and have wrap them all in
+							a zone or "execution context"<br>
+							- I like to think of it as a step between the global context and the function context,
+							depending on where the zone is
+						</aside>
+					</section>
+					<section>
+						<h3>Why is this useful?</h3>
+
+						<aside class="notes">
+							- while in a zone, the call stack is preserved<br>
+							- this means traces can follow all of the calls, and show you exactly where an error might
+							originate<br>
+							- you can also use it to trace the time from true start and end of all calls<br>
+						</aside>
+					</section>
+					<section>
+						<h3>How does Zone.js apply to real time?</h3>
+						<ul>
+							<li>watches <code>'this'</code> for changes</li>
+							<li>eliminates the need to <code>'$scope.$apply()'</code></li>
+						</ul>
+
+						<aside class="notes">
+							- Since zones watch out for changes made by all calls, it also watches out for changes to 'this'<br>
+							- Zone.js is the reason why you no longer need to use scope.apply, it watches your variables
+							and triggers a digest cycle when they are changed
+							- basically, when your data is update in real time, zone.js automatically preserves the
+							real time aspect by also updating the UI/front-end seamlessly
+						</aside>
 					</section>
 				</section>
 
@@ -133,10 +226,13 @@
 				<!-- REAL TIME -->
 				<section>
 					<section>
-						<h2>What is real time?</h2>
+						<h2>What is real time web?</h2>
 					</section>
 					<section>
-						Quote on real time
+						<blockquote cite="http://arstechnica.com/business/2012/05/say-hello-to-the-real-real-time-web/">
+							"...a Web that is as close to instant as you can get."
+						</blockquote>
+						<p>- Ars Technica</p>
 					</section>
 				</section>
 
@@ -144,10 +240,31 @@
 					<section>
 						<h3>Real Time with Syncano</h3>
 						<h5>How does it work?</h5>
+
+						<aside class="notes">
+							You could build a real time database with Firebase or Parse, or even build it yourself,
+							but I chose to use Syncano for mine.
+						</aside>
 					</section>
 					<section>
-						Explanation of Syncano and how it uses real time
+						<h3>Channels</h3>
+						<p>Syncano uses Channels to poll for real time updates</p>
 					</section>
+					<section>
+						<h3>Data Object Changes</h3>
+						<ul>
+							<li>Create</li>
+							<li>Update</li>
+							<li>Delete</li>
+							<li>Error</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h4>What does this look like with Angular 2?</h4>
+					<p>Everything that Angular displays on the front end
+					is being polled from Syncano on the backend in real time.</p>
 				</section>
 
 				<section>
@@ -163,11 +280,250 @@
 
 				<!-- List App -->
 				<section>
-					<h3>Let's Build!</h3>
+					<h3>Let's Build! (ES5)</h3>
 				</section>
 
 				<section>
+					<h4>index.html</h4>
+
+					<pre><code class="hljs" data-trim contenteditable>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;link rel="stylesheet" href="style.css" /&gt;
+  &lt;script src="https://code.angularjs.org/2.0.0-alpha.44/angular2.sfx.dev.js"&gt;&lt;/script&gt;
+  &lt;script src="syncano.min.js"&gt;&lt;/script&gt;
+  &lt;script src="app.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;h1&gt;Realtime Item List&lt;/h1&gt;
+  &lt;cmp&gt;&lt;/cmp&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+					</code></pre>
+				</section>
+
+				<section>
+					<section>
+						<h4>app.js - Component</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+var Cmp = ng.
+  Component({
+    selector: 'cmp',
+    template:
+      '&lt;ul style="width:15em"&gt;' +
+      '&lt;li *ng-for="#item of list" id="{{item.id}}"&gt;' +
+      '{{ item.name }} &lt;button (click)="removeItem(item)" style="float:right;"&gt;X&lt;/button&gt;' +
+      '&lt;/li&gt;' +
+      '&lt;/ul&gt;' +
+      '&lt;input id="textEntry" #textbox (keyup)="doneTyping($event)"&gt;' +
+      '&lt;button id="submitButton" (click)="addItem(textbox.value)"&gt;Add Item&lt;/button&gt;',
+    directives: [ng.NgModel, ng.FORM_DIRECTIVES, ng.NgFor]
+  })
+						</code></pre>
+					</section>
+
+					<section>
+						<h4>app.js - Class</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+.Class({
+  constructor: [function Cmp() {
+	var self = this; // ES5
+	this.list = []; // list of items
+	...
+  }]
+});
+						</code></pre>
+					</section>
+
+					<section>
+						<h4>app.js - Bootstrap</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+						document.addEventListener('DOMContentLoaded', function() {
+						ng.bootstrap(Cmp);
+						});
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3>Syncano Setup</h3>
+					</section>
+					<section>
+						<h4>Syncano Variables</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+// Syncano variables
+var sync = new Syncano({accountKey:myAccountKey}); // for creating obj
+var instance = new Syncano({apiKey:myApiKey, instance:myInstance}); // for realtime
+var realtime = instance.channel(myChannel).watch(); // realtime instance variable
+						</code></pre>
+					</section>
+
+					<section>
+						<h4>Generate Initial List</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+// Initial List from Syncano
+sync.instance(myInstance).class(myClass).dataobject().list()
+  .then(function(res){
+    for(i=0;i&lt;res.objects.length;i++){
+      self.list.push({ // push to array
+        name: res.objects[i].name,
+        id: res.objects[i].id
+      });
+    }
+  })
+  .catch(function(err){
+    console.log(err);
+  });
+						</code></pre>
+					</section>
+
+					<section>
+						<h4>Real Time Event Listeners</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+// Realtime Event Listeners - (scroll down)
+realtime.on('create', function(data) {
+  self.list.push({ // push new item to array with Syncano data
+    name: data.name,
+    id: data.id
+  });
+});
+
+realtime.on('delete', function(data) {
+  for(var i = self.list.length - 1; i >= 0; i--) {
+    if(self.list[i].id === data.id) {
+      self.list.splice(i, 1); // remove from array
+    }
+  }
+});
+
+realtime.on('error', function(data) {
+  console.log(data);
+});
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3>Class Functions</h3>
+					</section>
+
+					<section>
+						<h4>Add Item</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+this.addItem = function(item) { // add item to Syncano
+  var newItem = {
+    "name":item,
+    "channel":"itemlist"
+  };
+  sync.instance(myInstance).class(myClass).dataobject().add(newItem)
+    .then(function(res){
+      console.log(res);
+    })
+    .catch(function(err){
+      console.log(err);
+    })
+};
+						</code></pre>
+					</section>
+
+					<section>
+						<h4>Remove Item</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+this.removeItem = function(item){ // remove item from Syncano
+  sync.instance(myInstance).class(myClass).dataobject(item.id).delete()
+    .then(function(res){
+      console.log("Item: [" + item.name + "] was deleted");
+    })
+    .catch(function(err){
+      console.log(err);
+    });
+};
+						</code></pre>
+					</section>
+
+					<section>
+						<h4>When User is Done Typing..</h4>
+
+						<pre><code class="hljs" data-trim contenteditable>
+this.doneTyping = function($event) { // watches for keys when done typing
+  if($event.which === 13) { // 'enter' key
+    this.addItem($event.target.value);
+    $event.target.value = null;
+  }
+};
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h3>Live Example</h3>
+
 					<a href="http://plnkr.co/edit/fDQievvZqgUXpTwMwv6M?p=preview" target="_blank">Plunker</a>
+				</section>
+
+				<section>
+					<h3>Conclusion</h3><br>
+					<p>
+						We're in a world of real time web. As Angular moves towards using execution contexts to
+						provide our apps with real time capabilities (even though some calls are asynchronous), we
+						should focus on building our apps and web services for this real time web.
+					</p>
+
+					<aside class="notes">
+						There are many data solutions out there, whether you build your own, or use one like Syncano provides
+						that's up to you. I'm just excited that Angular is now providing us with a simple way to keep
+						our back-end in sync in real time with our front-end, and we didn't have to touch the scope to do it.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Sources</h3>
+
+					<small><a href="http://eisenbergeffect.bluespire.com/all-about-angular-2-0/">
+						http://eisenbergeffect.bluespire.com/all-about-angular-2-0/
+					</a></small>
+					<small><a href="http://davidshariff.com/blog/what-is-the-execution-context-in-javascript/">
+						http://davidshariff.com/blog/what-is-the-execution-context-in-javascript/
+					</a></small>
+					<small><a href="https://www.youtube.com/watch?v=3IqtmUscE_U">
+						https://www.youtube.com/watch?v=3IqtmUscE_U
+					</a></small>
+					<small><a href="https://gist.github.com/gdi2290/634101fec1671ee12b3e">
+						https://gist.github.com/gdi2290/634101fec1671ee12b3e
+					</a></small>
+					<small><a href="https://medium.com/@BuildMySite1/what-is-typescript-pros-and-cons-8dc5cdc3e78d#.xhivx0sdq">
+						https://medium.com/@BuildMySite1/what-is-typescript-pros-and-cons-8dc5cdc3e78d#.xhivx0sdq
+					</a></small>
+					<small><a href="http://www.infoworld.com/article/3010853/application-development/up-close-with-googles-angular-2-javascript-framework.html">
+						http://www.infoworld.com/article/3010853/application-development/up-close-with-googles-angular-2-javascript-framework.html
+					</a></small>
+					<small><a href="http://blog.thoughtram.io/angular/2015/07/06/even-better-es5-code-for-angular-2.html">
+						http://blog.thoughtram.io/angular/2015/07/06/even-better-es5-code-for-angular-2.html
+					</a></small>
+				</section>
+
+				<section>
+					<h1>Thanks!</h1>
+
+					<h3>Devin Visslailli - @devinviss</h3>
+					<p style="color:deepskyblue">Developer Evangelist for Syncano</p>
+
+					<p>Live Slides: <a href="http://bit.ly/1OzGZ23">http://bit.ly/1OzGZ23</a></p>
+					<p>Github Slide Repo: <a href="http://bit.ly/1SzcRmp">http://bit.ly/1SzcRmp</a></p>
 				</section>
 
 				<!--<section>-->
